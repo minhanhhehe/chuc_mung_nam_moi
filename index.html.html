@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Chúc Mừng Năm Mới 2026 🎆</title>
+
+<style>
+body{
+    margin:0;
+    overflow:hidden;
+    background:radial-gradient(circle,#ff2a2a,#7a0000);
+    font-family:'Segoe UI',sans-serif;
+    text-align:center;
+    color:white;
+}
+
+h1{
+    margin-top:20px;
+    font-size:46px;
+    text-shadow:0 0 25px gold;
+}
+
+/* ===== BAO LÌ XÌ ===== */
+.envelopes{
+    display:grid;
+    grid-template-columns:repeat(5,1fr);
+    gap:25px;
+    width:90%;
+    max-width:1000px;
+    margin:30px auto;
+}
+
+.envelope{
+    width:150px;
+    height:200px;
+    background:linear-gradient(#ff0000,#b30000);
+    border-radius:15px;
+    position:relative;
+    cursor:pointer;
+    box-shadow:0 0 20px gold;
+    transition:all 1.2s ease;
+}
+
+.envelope::before{
+    content:"🧧";
+    font-size:90px;
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+}
+
+.envelope.open{
+    transform:translateY(40px) scale(0.95);
+    opacity:0.45;
+}
+
+/* Lời chúc trên bao */
+.message{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:10px;
+    font-size:15px;
+    opacity:0;
+}
+
+.envelope.open .message{
+    opacity:1;
+}
+
+/* ===== LỜI CHÚC GIỮA MÀN HÌNH ===== */
+#centerMessage{
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%) scale(0.6);
+    font-size:36px;
+    padding:30px 45px;
+    background:rgba(255,255,255,0.18);
+    border-radius:22px;
+    backdrop-filter:blur(8px);
+    box-shadow:0 0 35px gold;
+    opacity:0;
+    z-index:10;
+}
+
+/* Hiệu ứng rung */
+#centerMessage.shake{
+    animation:shake 0.4s;
+}
+
+/* Hiệu ứng bay + hiện */
+#centerMessage.fly{
+    animation:flyIn 1.2s forwards;
+}
+
+@keyframes shake{
+    0%{transform:translate(-50%,-50%) translateX(0)}
+    25%{transform:translate(-50%,-50%) translateX(-8px)}
+    50%{transform:translate(-50%,-50%) translateX(8px)}
+    75%{transform:translate(-50%,-50%) translateX(-5px)}
+    100%{transform:translate(-50%,-50%) translateX(0)}
+}
+
+@keyframes flyIn{
+    from{
+        opacity:0;
+        transform:translate(-50%,-70%) scale(0.3);
+    }
+    to{
+        opacity:1;
+        transform:translate(-50%,-50%) scale(1);
+    }
+}
+
+/* ===== CANVAS PHÁO HOA ===== */
+canvas{
+    position:fixed;
+    top:0;
+    left:0;
+    z-index:-1;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🎉 Happy New Year 2026 🎉</h1>
+<p>Chọn 1 bao lì xì để nhận lời chúc ✨</p>
+
+<div class="envelopes" id="envelopes"></div>
+
+<!-- Lời chúc trung tâm -->
+<div id="centerMessage"></div>
+
+<!-- NHẠC TẾT -->
+<audio id="music" autoplay loop>
+    <source src="https://cdn.pixabay.com/download/audio/2023/12/21/audio_3b4d84e1dc.mp3">
+</audio>
+
+<canvas id="fireworks"></canvas>
+
+<script>
+/* ===== LỜI CHÚC ===== */
+const wishes=[
+"🌸 Chúc năm mới sức khỏe dồi dào, mọi việc suôn sẻ!",
+"💰 Chúc tài lộc dồi dào, tiền vào như nước!",
+"🎓 Học tập tiến bộ, thi cử hanh thông!",
+"❤️ Gia đình hạnh phúc, yêu thương trọn vẹn!",
+"✨ Mọi ước mơ đều trở thành hiện thực!",
+"🌟 Thành công rực rỡ trong năm mới!",
+"😊 Luôn vui vẻ, bình an mỗi ngày!",
+"🚀 Bứt phá bản thân, chinh phục mục tiêu!",
+"🍀 May mắn luôn đồng hành!",
+"🎉 Một năm mới thật đáng nhớ!"
+];
+
+/* ===== TẠO BAO LÌ XÌ ===== */
+const box=document.getElementById("envelopes");
+const center=document.getElementById("centerMessage");
+
+wishes.forEach(text=>{
+    const env=document.createElement("div");
+    env.className="envelope";
+    env.innerHTML=`<div class="message">${text}</div>`;
+
+    env.onclick=()=>{
+        if(env.classList.contains("open")) return;
+
+        env.classList.add("open");
+
+        center.className="";
+        center.innerHTML=text;
+
+        /* chạy animation */
+        void center.offsetWidth;
+        center.classList.add("fly","shake");
+    };
+
+    box.appendChild(env);
+});
+
+/* ===== PHÁO HOA ĐA MÀU ===== */
+const canvas=document.getElementById("fireworks");
+const ctx=canvas.getContext("2d");
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+
+let particles=[];
+
+function randomColor(){
+    const colors=["#ff0","#ff4d4d","#00eaff","#7CFF00","#ff00ff","#ffa500"];
+    return colors[Math.floor(Math.random()*colors.length)];
+}
+
+function createFirework(){
+    const x=Math.random()*canvas.width;
+    const y=Math.random()*canvas.height*0.5;
+    for(let i=0;i<100;i++){
+        particles.push({
+            x,y,
+            vx:(Math.random()-0.5)*7,
+            vy:(Math.random()-0.5)*7,
+            life:70,
+            color:randomColor()
+        });
+    }
+}
+
+function draw(){
+    ctx.fillStyle="rgba(0,0,0,0.25)";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    particles.forEach((p,i)=>{
+        ctx.beginPath();
+        ctx.arc(p.x,p.y,3,0,Math.PI*2);
+        ctx.fillStyle=p.color;
+        ctx.fill();
+        p.x+=p.vx;
+        p.y+=p.vy;
+        p.life--;
+        if(p.life<=0) particles.splice(i,1);
+    });
+}
+
+setInterval(createFirework,350);
+setInterval(draw,30);
+
+/* ===== CHỐNG CHẶN AUTOPLAY ===== */
+document.body.addEventListener("click",()=>{
+    document.getElementById("music").play();
+},{once:true});
+</script>
+
+</body>
+</html>
